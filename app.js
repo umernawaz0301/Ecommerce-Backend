@@ -1,9 +1,8 @@
 const express = require("express");
 const port = 8080;
 const app = express();
-const mongoose = require("mongoose");
+const db = require("./db/index");
 const bodyParser = require("body-parser");
-require("dotenv/config");
 app.use(bodyParser.json()); // support json encoded bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
@@ -15,10 +14,12 @@ app.get("/", (req, res) => {
   res.send("welcome");
 });
 
-//connect to DB
-mongoose.connect(process.env.DB_CONNECTION, { useNewUrlParser: true }, () => {
-  console.log("connected to DB!");
+//db connection
+db.connect().then(() => {
+  // server start
+  app.listen(port, () => {
+    console.log("listening to the port: ", port);
+  });
 });
 
-// listen
-app.listen(port);
+module.exports = app;
